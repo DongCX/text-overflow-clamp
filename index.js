@@ -27,17 +27,25 @@ module.exports = (function (d) {
     s.visibility = 'hidden'; // prevent drawing
   })(measure.style);
 
-  return function clamp(el, lineClamp) {
+  return function clamp(el, lineClamp, options) {
     // make sure the element belongs to the document
-    if (!el.ownerDocument || !el.ownerDocument === d) {
+    if (!el || !el.ownerDocument || !el.ownerDocument === d) {
       return;
     }
+
+    options = options || {};
+    var truncateText = options.truncateText || '';
 
     // reset to safe starting values
     lineStart = wordStart = 0;
     lineCount = 1;
     wasNewLine = false;
     lineWidth = el.clientWidth;
+
+    // remove truncate span first
+    if (el.lineContainer && el.truncSpan) {
+      el.lineContainer.removeChild(el.truncSpan);
+    }
 
     // get all the text, remove any line changes
     text = (el.textContent || el.innerText).replace(/\n/g, ' ');
@@ -98,6 +106,28 @@ module.exports = (function (d) {
     // remove the measurement element from the container
     el.removeChild(measure);
 
+    // create last line container
+    var lineContainer = ce('span');
+
+    (function (s) {
+      s.display = 'flex';
+      s.justifyContent = 'center';
+      s.width = '100%';
+    })(lineContainer.style);
+
+    // create truncation span element
+    var truncSpan = ce('span');
+    truncSpan.appendChild(ctn(truncateText));
+
+    (function (s) {
+      s.flex = '0 0 auto';
+      s.whiteSpace = 'pre';
+    })(truncSpan.style);
+
+    // save references
+    el.lineContainer = lineContainer;
+    el.truncSpan = truncSpan;
+
     // create the last line element
     line = ce('span');
 
@@ -107,13 +137,16 @@ module.exports = (function (d) {
       s.overflow = 'hidden';
       s.textOverflow = 'ellipsis';
       s.whiteSpace = 'nowrap';
-      s.width = '100%';
     })(line.style);
 
     // add all remaining text to the line element
     line.appendChild(ctn(text.substr(lineStart)));
 
+    // add remaining text and truncation text to div
+    lineContainer.appendChild(line);
+    lineContainer.appendChild(truncSpan);
+
     // add the line element to the container
-    el.appendChild(line);
+    el.appendChild(lineContainer);
   };
 })(document);
