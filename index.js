@@ -9,31 +9,6 @@
 // nieve document polyfill
 var document = require('global/document');
 
-// bind function support for older browsers without it
-// https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind
-if (!Function.prototype.bind) {
-  Function.prototype.bind = function (oThis) {
-    if (typeof this !== "function") {
-      // closest thing possible to the ECMAScript 5 internal IsCallable function
-      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-    }
- 
-    var aArgs = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP = function () {},
-        fBound = function () {
-          return fToBind.apply(this instanceof fNOP && oThis
-                                 ? this
-                                 : oThis,
-                               aArgs.concat(Array.prototype.slice.call(arguments)));
-        };
- 
-    fNOP.prototype = this.prototype;
-    fBound.prototype = new fNOP();
- 
-    return fBound;
-  };
-}
 
 // the actual meat is here
 module.exports = (function(d){
@@ -42,23 +17,23 @@ module.exports = (function(d){
 		line, lineText, wasNewLine,
     ce = d.createElement.bind(d),
     ctn = d.createTextNode.bind(d);
-	
+
 	// measurement element is made a child of the clamped element to get it's style
 	measure = ce('span');
-  
+
 	(function(s){
 		s.position = 'absolute'; // prevent page reflow
 		s.whiteSpace = 'pre'; // cross-browser width results
 		s.visibility = 'hidden'; // prevent drawing
 	})(measure.style);
-	
+
 	return function clamp (el, lineClamp) {
     // make sure the element belongs to the document
     if(!el.ownerDocument || !el.ownerDocument === d) return;
 		// reset to safe starting values
 		lineStart = wordStart = 0;
 		lineCount = 1;
-		wasNewLine = false; 
+		wasNewLine = false;
 		lineWidth = el.clientWidth;
 		// get all the text, remove any line changes
 		text = (el.textContent || el.innerText).replace(/\n/g, ' ');
