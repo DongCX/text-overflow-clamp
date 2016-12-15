@@ -27,14 +27,16 @@ module.exports = (function (d) {
     s.visibility = 'hidden'; // prevent drawing
   })(measure.style);
 
-  return function clamp(el, lineClamp, options) {
+  return function clamp(el, options) {
     // make sure the element belongs to the document
     if (!el || !el.ownerDocument || !el.ownerDocument === d) {
       return;
     }
 
     options = options || {};
+    var lineClamp = options.lineClamp || 2;
     var truncateText = options.truncateText || '';
+    var textAlign = options.textAlign || 'flex-start';
 
     // reset to safe starting values
     lineStart = wordStart = 0;
@@ -106,27 +108,34 @@ module.exports = (function (d) {
     // remove the measurement element from the container
     el.removeChild(measure);
 
+    // create truncation span element
+    var truncSpan;
+    if (truncateText) {
+      truncSpan = ce('span');
+      truncSpan.appendChild(ctn(truncateText));
+
+      (function (s) {
+        s.flex = '0 0 auto';
+        s.whiteSpace = 'pre';
+      })(truncSpan.style);
+
+      el.truncSpan = truncSpan;
+    }
+
     // create last line container
     var lineContainer = ce('span');
 
     (function (s) {
       s.display = 'flex';
-      s.justifyContent = 'center';
       s.width = '100%';
+
+      if (truncSpan) {
+        s.justifyContent = textAlign;
+      }
     })(lineContainer.style);
-
-    // create truncation span element
-    var truncSpan = ce('span');
-    truncSpan.appendChild(ctn(truncateText));
-
-    (function (s) {
-      s.flex = '0 0 auto';
-      s.whiteSpace = 'pre';
-    })(truncSpan.style);
 
     // save references
     el.lineContainer = lineContainer;
-    el.truncSpan = truncSpan;
 
     // create the last line element
     line = ce('span');
@@ -144,7 +153,9 @@ module.exports = (function (d) {
 
     // add remaining text and truncation text to div
     lineContainer.appendChild(line);
-    lineContainer.appendChild(truncSpan);
+    if (truncSpan) {
+      lineContainer.appendChild(truncSpan);
+    }
 
     // add the line element to the container
     el.appendChild(lineContainer);
