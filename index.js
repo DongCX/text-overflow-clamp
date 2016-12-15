@@ -146,6 +146,9 @@ module.exports = (function (d) {
       s.overflow = 'hidden';
       s.textOverflow = 'ellipsis';
       s.whiteSpace = 'nowrap';
+      if (!truncSpan) {
+        s.flex = '1 1 auto';
+      }
     })(line.style);
 
     // add all remaining text to the line element
