@@ -21,11 +21,11 @@ module.exports = (function (d) {
   // measurement element is made a child of the clamped element to get it's style
   measure = ce('span');
 
-  (function (s) {
-    s.position = 'absolute'; // prevent page reflow
-    s.whiteSpace = 'pre'; // cross-browser width results
-    s.visibility = 'hidden'; // prevent drawing
-  })(measure.style);
+  Object.assign(measure.style, {
+    position: 'absolute', // prevent page reflow
+    whiteSpace: 'pre', // cross-browser width results
+    visibility: 'hidden' // prevent drawing
+  });
 
   return function clamp(el, options) {
     // make sure the element belongs to the document
@@ -114,10 +114,10 @@ module.exports = (function (d) {
       truncSpan = ce('span');
       truncSpan.appendChild(ctn(truncateText));
 
-      (function (s) {
-        s.flex = '0 0 auto';
-        s.whiteSpace = 'pre';
-      })(truncSpan.style);
+      Object.assign(truncSpan.style, {
+        flex: '0 0 auto',
+        whiteSpace: 'pre'
+      });
 
       el.truncSpan = truncSpan;
     }
@@ -125,14 +125,14 @@ module.exports = (function (d) {
     // create last line container
     var lineContainer = ce('span');
 
-    (function (s) {
-      s.display = 'flex';
-      s.width = '100%';
-
-      if (truncSpan) {
-        s.justifyContent = textAlign;
-      }
-    })(lineContainer.style);
+    var lineContainerStyle = {
+      display: 'flex',
+      width: '100%'
+    };
+    if (truncSpan) {
+      lineContainerStyle.justifyContent = textAlign;
+    }
+    Object.assign(lineContainer.style, lineContainerStyle);
 
     // save references
     el.lineContainer = lineContainer;
@@ -141,15 +141,16 @@ module.exports = (function (d) {
     line = ce('span');
 
     // give styles required for text-overflow to kick in
-    (function (s) {
-      s.display = 'block';
-      s.overflow = 'hidden';
-      s.textOverflow = 'ellipsis';
-      s.whiteSpace = 'nowrap';
-      if (!truncSpan) {
-        s.flex = '1 1 auto';
-      }
-    })(line.style);
+    var lineStyle = {
+      display: 'block',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    };
+    if (!truncSpan) {
+      lineStyle.flex = '1 1 auto';
+    }
+    Object.assign(line.style, lineStyle);
 
     // add all remaining text to the line element
     line.appendChild(ctn(text.substr(lineStart)));
