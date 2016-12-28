@@ -1,6 +1,6 @@
 {
   "name": "text-overflow-clamp",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A bare-bones port of Vesa Piittinen's TextOverflowClamp.js (http://codepen.io/Merri/pen/Dsuim)",
   "main": "index.js",
   "scripts": {
