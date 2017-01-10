@@ -146,7 +146,8 @@ module.exports = (function (d) {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
-      paddingRight: '1ch'
+      paddingRight: '1ch',
+      marginRight: '-1ch'
     };
     if (!truncSpan) {
       lineStyle.flex = '1 1 auto';
