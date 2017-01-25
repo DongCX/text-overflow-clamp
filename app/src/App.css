@@ -1,0 +1,13 @@
+.App {
+  height: calc(100% - 40px);
+  padding: 20px;
+  background: #bada55;
+  text-align: center;
+}
+
+.App-intro {
+  width: 400px;
+  margin: 0 auto 20px;
+  font-size: large;
+  background: white;
+}

@@ -2,12 +2,9 @@
 /**
  * TextOverflowClamp.js
  *
- * Updated 2013-05-09 to remove jQuery dependancy.
+ * Updated 2013-05-09 to remove jQuery dependency.
  * But be careful with webfonts!
  */
-
-// nieve document polyfill
-var document = require('global/document');
 
 
 // the actual meat is here
@@ -50,7 +47,7 @@ module.exports = (function (d) {
     }
 
     // get all the text, remove any line changes
-    text = (el.textContent || el.innerText).replace(/\n/g, ' ');
+    text = (el.textContent || el.innerText).replace(/\n/g, ' ') + ' ';
 
     // remove all content
     while (el.firstChild !== null) {
